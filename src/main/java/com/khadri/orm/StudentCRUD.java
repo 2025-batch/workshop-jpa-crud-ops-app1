@@ -1,22 +1,47 @@
 package com.khadri.orm;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+
 public class StudentCRUD {
 
-    public static void insert(Student student) {
-        
-    }
+	private EntityManagerFactory factory;
+	private EntityManager em;
 
-    public static Student find(int id) {
-        return null; 
-    }
+	public StudentCRUD(EntityManagerFactory factory) {
+		this.factory = factory;
+	}
 
+	public void insert(Student student) {
+		em = this.factory.createEntityManager();
+		em.getTransaction().begin();
+		em.persist(student);
+		em.getTransaction().commit();
+		em.close();
+	}
 
-    public static void update(Student student) {
-        
-    }
+	public Student find(int id) {
+		em = this.factory.createEntityManager();
+		Student student = em.find(Student.class, id);
+		em.close();
+		return student;
+	}
 
-    public static void delete(int id) {
-       
-    }
+	public Student update(Student newStudent) {
+		em = this.factory.createEntityManager();
+		em.getTransaction().begin();
+		Student mergedStudent = em.merge(newStudent);
+		em.getTransaction().commit();
+		em.close();
+		return mergedStudent;
+	}
+
+	public void delete(int id) {
+		em = this.factory.createEntityManager();
+		Student deleteStudent = em.find(Student.class, id);
+		em.getTransaction().begin();
+		em.remove(deleteStudent);
+		em.getTransaction().commit();
+		em.close();
+	}
 }
-
